@@ -32,14 +32,14 @@ res <-analyze_objects(fungo,
 get_measures(res, dpi = 90) |> plot_measures(measure = "area", col = "black",size = 2)
 ```
 
-## Utilizando espectros
+## Automatizando
 
-Nesse caso
+Nesse caso tentarei automatizar para pegar a medida por conta do programa
 
 ```{r}
-indexes <- image_index(fungo, index = c("HUE, HUE2, R, BI, L , atan(2*(R-G-R)/30.5*(G-B)) - atan(2*(B-G-R)/30.5*(G-R)) - G+R+B/3"))
+Placa_Petri <- image_segment_mask(fungo,shape = "disc", size = 280, plot = TRUE)
 
-plot(indexes, type = "density")
+fungo_contorno <- analyze_objects(Placa_Petri,index = "HUE",invert = TRUE , filter = 8)
 
-image_binary(fungo , index = "HUE", filter = 12)
+get_measures(fungo_contorno, dpi = 90) |> plot_measures(measure = "area", col = "black",size = 3)
 ```
