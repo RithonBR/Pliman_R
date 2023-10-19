@@ -51,7 +51,29 @@ fungo_Binary <- image_binary(Placa_Petri,index = "HUE", filter = 5)[[1]]
 
 fungo_contorno <- analyze_objects(Placa_Petri,index = "HUE",invert = TRUE , filter = 7)
 
-get_measures(fungo_contorno, dpi = 90) |> plot_measures(measure = "area", col = "black",size = 3)
 
-image_combine(Placa_Petri,fungo_Binary,fungo_contorno)
+fungo_Final <- get_measures(fungo_contorno, dpi = 90) |> plot_measures(measure = "area", col = "black",size = 3)
+
+fungo_final <- image_combine(Placa_Petri,fungo_Binary,fungo_contorno)
+
+```
+
+## Espaço de Testes
+
+```{r}
+library(pliman)
+
+set_wd_here("img")
+fungo <- image_import("teste-area.jpeg", plot = TRUE)
+
+#Placa_Petri <- image_segment_mask(fungo,shape = "disc", size = 1005, plot = TRUE)
+
+fungo_Foto <- image_index(fungo,index = "HUE")
+
+fungo_Binary <- image_binary(Placa_Petri,index = "HUE", filter = 5)[[0]]
+
+fungo_contorno <- analyze_objects(Placa_Petri,index = "HUE",invert = TRUE , filter = 7)
+
+fungo_Final <- get_measures(fungo_contorno, dpi = 90) |> plot_measures(measure = "area", col = "black",size = 3)
+
 ```
