@@ -1,0 +1,45 @@
+---
+title: "Teste Luciano contagem e medidas"
+format: html
+editor: visual
+---
+
+## Ativar a biblioteca e setar repo de imagens
+
+Nesse caso as imagens deverão estar na pasta img deste documento
+
+```{r}
+library(pliman)
+
+set_wd_here("img")
+```
+
+## Medir o fungo
+
+Nesse caso as imagens deverão estar na pasta img com o nome fungo, quando iniciar o comando analyze voce deve utilizar o botão draw marker para pegar pontos sem ser o fungo e clicar em done logo apos selecione as bordas do fungo.
+
+```{r}
+fungo <- image_import("fungo.jpeg", plot = TRUE)
+
+res <-analyze_objects(fungo,
+                  viewer = "map",
+                  pick_palettes = TRUE,
+                  filter = 5,
+                  watershed = FALSE,
+                  contour_size = 6)
+
+
+get_measures(res, dpi = 90) |> plot_measures(measure = "area", col = "black",size = 2)
+```
+
+## Utilizando espectros
+
+Nesse caso
+
+```{r}
+indexes <- image_index(fungo, index = c("HUE, HUE2, R, BI, L , atan(2*(R-G-R)/30.5*(G-B)) - atan(2*(B-G-R)/30.5*(G-R)) - G+R+B/3"))
+
+plot(indexes, type = "density")
+
+image_binary(fungo , index = "HUE", filter = 12)
+```
