@@ -39,7 +39,13 @@ Nesse caso tentarei automatizar para pegar a medida por conta do programa
 ```{r}
 Placa_Petri <- image_segment_mask(fungo,shape = "disc", size = 280, plot = TRUE)
 
+fungo_Foto <- image_index(Placa_Petri,index = "HUE")
+
+fungo_Binary <- image_binary(Placa_Petri,index = "HUE", filter = 5)[[1]]
+
 fungo_contorno <- analyze_objects(Placa_Petri,index = "HUE",invert = TRUE , filter = 8)
 
 get_measures(fungo_contorno, dpi = 90) |> plot_measures(measure = "area", col = "black",size = 3)
+
+image_combine(Placa_Petri,fungo_Binary,fungo_contorno)
 ```
