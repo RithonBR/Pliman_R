@@ -51,10 +51,13 @@ fungo_Binary <- image_binary(Placa_Petri,index = "HUE", filter = 5)[[1]]
 
 fungo_contorno <- analyze_objects(Placa_Petri,index = "HUE",invert = TRUE , filter = 7)
 
+
 get_measures(fungo_contorno, dpi = 90) |> plot_measures(measure = "area", col = "black",size = 3)
 
+
 fungo_final2 <- image_combine(Placa_Petri,fungo_Binary)
-image_export(fungo_final2, "imagemFinal.jpg")
+
+fungo_final2 <- image_combine(Placa_Petri,fungo_Binary,final)
 # colocar a foto com medida do lado
 ```
 
