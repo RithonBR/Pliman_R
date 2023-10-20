@@ -71,7 +71,9 @@ fungo <- image_resize(fungo, rel_size = 50, plot = TRUE)
 hw <- image_dimension(fungo)
 Placa_Petri <- image_segment_mask(fungo,shape = "disc", plot = TRUE, size = hw[[2]]-1)
 
-fungo_Foto <- image_index(Placa_Petri,index = "HUE")
+indexes <- image_index(Placa_Petri, index = c("R, HUE, B, GRAY, S, R-(B/G)"))
+
+fungo_Foto <- image_index(Placa_Petri,index = indexes)
 
 fungo_Binary <- image_binary(Placa_Petri,index = "", filter = 10)[[0]]
 
@@ -79,4 +81,12 @@ fungo_contorno <- analyze_objects(Placa_Petri,index = "",invert = TRUE , filter 
 
 fungo_Final <- get_measures(fungo_contorno, dpi = imgres) |> plot_measures(measure = "area", col = "black",size = 3)
 
+```
+
+## Metodos de Contagem
+
+Nesse caso as imagens deverão estar na pasta img com o nome contagem
+
+```{r}
+contagem <- image_import("contagem.jpg", plot = TRUE)
 ```
