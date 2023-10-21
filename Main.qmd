@@ -81,7 +81,23 @@ get_measures(fungo_contorno, dpi = imgres) |> plot_measures(measure = "area", co
 
 ```
 
-## Metodos de Contagem
+## Espaço de Testes automatizados (imagens 590x600)
+
+```{r}
+library(pliman)
+set_wd_here("img")
+fungo <- image_import("teste-area.jpeg", plot = FALSE)
+
+fungo <- image_resize(fungo,rel_size = 50,plot = TRUE)
+pegar_circulo <- image_dimension(fungo)
+
+fungo <- image_segment_mask(fungo, shape = "disc",size = pegar_circulo[[2]] -1)
+
+indexes <- c("BIM,L*,L,GRAY")
+
+```
+
+## Metodos de Contagem (necessita de otimização na contagem dos halos)
 
 Nesse caso as imagens deverão estar na pasta img com o nome contagem
 
@@ -92,37 +108,64 @@ library(ggridges)
 
 set_wd_here("img")
 
-contagem <- image_import("teste-contagem.jpg", plot = TRUE)
+contagem <- image_import("bacterias.jpg", plot = TRUE)
 
-image_index(contagem, index = "HUE,R,G,B,HUE2,L")
+# ignorar comando a baixo, pois a imagem ja esta 400x400
+#contagem <- image_resize(contagem,rel_size = 50)
 
-res2 <- 
-  analyze_objects(contagem,
-                  index = "B",
-                  reference = TRUE,
-                  reference_area = 6,
-                  reference_larger = TRUE,
-                  show_contour = FALSE,
+x <- image_dimension(contagem)
+
+indexes <- c("R,B,G,HUE,HUE2,BIM")
+
+contagem <- image_segment_mask(contagem, shape = "disc",size = x[[1]]-31)
+
+image_index(contagem, index = indexes)
+
+#area total da placa colonizada
+seg <- image_segment(contagem,
+                     index = "HUE",
+                     col_background = "BLACK",
+                     invert = FALSE,
+                     plot = TRUE)
+
+#seguementar colonias com seus halos
+seg2 <- image_segment(contagem,
+                     index = "HUE",
+                     col_background = "BLACK",
+                     invert = TRUE,
+                     plot = TRUE)
+
+#verificar qual index as colonias ficam mais evidentes
+image_index(seg2, index = indexes)
+
+#codigo para pegar DPI (fazer uma linha com drawn line de um canto a outro e botar "9")
+pegar_dpi <- dpi(contagem,viewer = "map")
+
+#tentar pegar somente os halos
+seg3 <- image_segment(seg2,
+                      index = "HUE2",
+                      col_background = "BLACK",
+                      invert = FALSE,
+                      plot = TRUE)
+#pegar o espaço entre as colonias
+res1 <- 
+  analyze_objects(seg2,
+                  index = "G",
+                  invert = TRUE,
                   marker = "point")
-plot(res2, measure = "length")
+#pegar as colonias (halos completos)
+res2 <- 
+  analyze_objects(seg,
+                  index = "R")
+get_measures(res2, dpi = pegar_dpi) |> plot_measures(measure = "area", col = "RED",size = 1)
 
-analyze_objects(contagem,
-                index = "GRAY",
-                reference = TRUE,
-                reference_area = 6,
-                reference_larger = TRUE,
-                show_contour = FALSE,
-                topn_upper = 5,
-                marker = "point")
 
-analyze_objects(contagem,
-                index = "GRAY",
-                reference = TRUE,
-                reference_area = 6,
-                reference_larger = TRUE,
-                show_contour = FALSE,
-                lower_noise = 0,
-                # lower_noise = 0.25,
-                marker = "point")
+res3 <-
+  analyze_objects(seg3,
+                  index = "HUE2",
+                  invert = TRUE,
+                  marker = "id")
+```
 
+```         
 ```
