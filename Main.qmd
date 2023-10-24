@@ -167,5 +167,28 @@ res3 <-
                   marker = "id")
 ```
 
-```         
+## Retirar % de graos do monitor campo john deere
+
+Nesse caso as imagens deverão estar na pasta img com o nome monitortrator, tentativa de separar Verde (3 tonalidades como podemos ver na foto) , Amarelo (somente 1 tonalidade), Laranja (2 tipos de tonalidade) e Vermelho (2 tipos de tonalidade)
+
+```{r}
+library(pliman)
+set_wd_here("img")
+monitor <- image_import("monitortrator.jpeg", plot = TRUE)
+
+pegar_circulo <- image_dimension(monitor)
+
+monitor <- image_segment_mask(monitor, shape = "disc",size = pegar_circulo[[2]])
+
+indexes <- c("R,G,R+G")
+
+image_index(monitor, index = indexes)
+
+monitorVerdeMacro <- analyze_objects(monitor,index = "R",invert = FALSE)
+
+monitorAmareloMacro <- analyze_objects(monitor,index = "R+G",invert = TRUE)
+
+monitorVermelhoMacro <- analyze_objects(monitor,index = "G",invert = FALSE)
+
+
 ```
