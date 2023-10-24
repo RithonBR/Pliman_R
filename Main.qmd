@@ -173,6 +173,7 @@ Nesse caso as imagens deverão estar na pasta img com o nome monitortrator, tent
 
 ```{r}
 library(pliman)
+library(tidyverse)
 set_wd_here("img")
 monitor <- image_import("monitortrator.jpeg", plot = TRUE)
 
@@ -180,32 +181,96 @@ pegar_circulo <- image_dimension(monitor)
 
 monitor <- image_segment_mask(monitor, shape = "disc",size = pegar_circulo[[2]])
 
-indexes <- c("R,G,R+G,(R+G)-R")
+```
 
-image_index(monitor, index = indexes)
+```{r}
+set_pliman_viewer("mapview")
+plot(monitor)
+res <- analyze_objects(monitor,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
 
-pegar_dpi = dpi(monitor,viewer = "map")
+imagem_palheta <- image_import(img = "palheta.jpeg", plot = TRUE)
 
-#Monitor Verde
-monitorVerdeMacro <- analyze_objects(monitor,index = "R",invert = FALSE)
+men70 <- image_crop(imagem_palheta) 
 
-medidas_Verde <- get_measures(monitorVerdeMacro, dpi = pegar_dpi) 
+entre7080 <- image_crop(imagem_palheta)
 
-plot_measures(monitorVerdeMacro,measure = "id", col = "BLACK",size = 0.5)
+entre8090 <- image_crop(imagem_palheta)
 
-#Monitor amarelo (ARRUMAR AS CONTAGENS DE FORA)
-monitorAmareloMacro <- analyze_objects(monitor,index = "R+G",invert = TRUE)
+entre90100 <- image_crop(imagem_palheta) 
 
-medidas_Amarelo <- get_measures(monitorAmareloMacro, dpi = pegar_dpi) 
+entre100110 <- image_crop(imagem_palheta)
 
-plot_measures(monitorAmareloMacro,measure = "id", col = "BLACK",size = 0.5)
+entre110120 <- image_crop(imagem_palheta)
 
-#Monitor Vermelho
-monitorVermelhoMacro <- analyze_objects(monitor,index = "G",invert = FALSE)
+entre120130 <- image_crop(imagem_palheta)
 
-medidas_Vermelho <- get_measures(monitorAmareloMacro, dpi = pegar_dpi) 
-
-plot_measures(monitorVermelhoMacro,measure = "id", col = "BLACK",size = 0.5)
+maior130 <- image_crop(imagem_palheta)
 
 
+men70 <- 
+  image_to_mat(men70) %>% 
+  mutate(classe = "70")
+entre7080 <- 
+  image_to_mat(entre7080) %>%
+  mutate(classe = "7080")
+entre8090 <- 
+  image_to_mat(entre8090) %>% 
+  mutate(classe = "8090")
+entre90100 <- 
+  image_to_mat(entre90100) %>% 
+  mutate(classe = "90100")
+entre100110 <- 
+  image_to_mat(entre100110) %>% 
+  mutate(classe = "100110")
+entre110120 <- 
+  image_to_mat(entre110120) %>% 
+  mutate(classe = "110120")
+entre120130 <- 
+  image_to_mat(entre120130) %>% 
+  mutate(classe = "120130")
+maior130 <- 
+  image_to_mat(maior130) %>%
+  mutate(classe = "130")
+
+dfbind <- 
+  bind_rows(men70, entre7080,entre8090,entre90100,entre100110,entre110120,entre120130,maior130) %>% 
+  rename(R = B1, G = B2, B = B3) %>% 
+  mutate(classe = as.factor(classe))
+
+library(caret)
+trcont <- trainControl(
+  method = "cv",
+  p = 0.7,
+  number = 10,
+  verboseIter = TRUE
+)
+mod <- train(
+  classe ~ R + G + B,
+  method = "rf",
+  ntree = 100,
+  tuneGrid = expand.grid(.mtry = 5),
+  data = dfbind,
+  trControl = trcont
+)
+
+# pixels do pivo
+pix <- 
+  res$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n),
+         mediclasse = c(105, 115, 125, 130, 70, 75, 85, 95),
+         prodest = prop * mediclasse) 
+
+library(rio)
+export(pix, "resultado_pivo_2.xlsx")
+
+
+image_combine(monitor, monitor)
 ```
