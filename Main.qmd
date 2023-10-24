@@ -180,15 +180,32 @@ pegar_circulo <- image_dimension(monitor)
 
 monitor <- image_segment_mask(monitor, shape = "disc",size = pegar_circulo[[2]])
 
-indexes <- c("R,G,R+G")
+indexes <- c("R,G,R+G,(R+G)-R")
 
 image_index(monitor, index = indexes)
 
+pegar_dpi = dpi(monitor,viewer = "map")
+
+#Monitor Verde
 monitorVerdeMacro <- analyze_objects(monitor,index = "R",invert = FALSE)
 
+medidas_Verde <- get_measures(monitorVerdeMacro, dpi = pegar_dpi) 
+
+plot_measures(monitorVerdeMacro,measure = "id", col = "BLACK",size = 0.5)
+
+#Monitor amarelo (ARRUMAR AS CONTAGENS DE FORA)
 monitorAmareloMacro <- analyze_objects(monitor,index = "R+G",invert = TRUE)
 
+medidas_Amarelo <- get_measures(monitorAmareloMacro, dpi = pegar_dpi) 
+
+plot_measures(monitorAmareloMacro,measure = "id", col = "BLACK",size = 0.5)
+
+#Monitor Vermelho
 monitorVermelhoMacro <- analyze_objects(monitor,index = "G",invert = FALSE)
+
+medidas_Vermelho <- get_measures(monitorAmareloMacro, dpi = pegar_dpi) 
+
+plot_measures(monitorVermelhoMacro,measure = "id", col = "BLACK",size = 0.5)
 
 
 ```
