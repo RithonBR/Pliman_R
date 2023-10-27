@@ -181,9 +181,6 @@ pegar_circulo <- image_dimension(monitor)
 
 monitor <- image_segment_mask(monitor, shape = "disc",size = pegar_circulo[[2]])
 
-```
-
-```{r}
 set_pliman_viewer("mapview")
 plot(monitor)
 res <- analyze_objects(monitor,
@@ -191,24 +188,79 @@ res <- analyze_objects(monitor,
                        object_index = "R",
                        pixel_level_index = TRUE)
 
+monitor_tratamentos <- image_import(img = "monitor_tratamentos.jpg")
+
+moni1 <- image_crop(img = monitor_tratamentos)
+moni2 <- image_crop(img = monitor_tratamentos)
+moni3 <- image_crop(img = monitor_tratamentos)
+moni4 <- image_crop(img = monitor_tratamentos)
+moni5 <- image_crop(img = monitor_tratamentos)
+moni6 <- image_crop(img = monitor_tratamentos)
+moni7 <- image_crop(img = monitor_tratamentos)
+moni8 <- image_crop(img = monitor_tratamentos)
+moni9 <- image_crop(img = monitor_tratamentos)
+moni10 <- image_crop(img = monitor_tratamentos)
+
+trata1 <- analyze_objects(moni1,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
+
+trata2 <- analyze_objects(moni2,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
+
+trata3 <- analyze_objects(moni3,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
+
+trata4 <- analyze_objects(moni4,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
+
+trata5 <- analyze_objects(moni5,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
+
+trata6 <- analyze_objects(moni6,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
+
+trata7 <- analyze_objects(moni7,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
+
+trata8 <- analyze_objects(moni8,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
+
+trata9 <- analyze_objects(moni9,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
+
+trata10 <- analyze_objects(moni10,
+                       watershed = FALSE,
+                       object_index = "R",
+                       pixel_level_index = TRUE)
+
 imagem_palheta <- image_import(img = "palheta.jpeg", plot = TRUE)
 
 men70 <- image_crop(imagem_palheta) 
-
 entre7080 <- image_crop(imagem_palheta)
-
 entre8090 <- image_crop(imagem_palheta)
-
 entre90100 <- image_crop(imagem_palheta) 
-
 entre100110 <- image_crop(imagem_palheta)
-
 entre110120 <- image_crop(imagem_palheta)
-
 entre120130 <- image_crop(imagem_palheta)
-
 maior130 <- image_crop(imagem_palheta)
-
 
 men70 <- 
   image_to_mat(men70) %>% 
@@ -256,6 +308,7 @@ mod <- train(
   trControl = trcont
 )
 
+
 # pixels do pivo
 pix <- 
   res$object_rgb %>% 
@@ -268,9 +321,109 @@ pix <-
          mediclasse = c(105, 115, 125, 130, 70, 75, 85, 95),
          prodest = prop * mediclasse) 
 
+pix1 <- 
+  trata1$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n)) 
+
+pix2 <- 
+  trata2$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n)) 
+
+pix3 <- 
+  trata3$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n)) 
+
+pix4 <- 
+  trata4$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n)) 
+
+pix5 <- 
+  trata5$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n)) 
+
+pix6 <- 
+  trata6$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n)) 
+
+pix7 <- 
+  trata7$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n)) 
+
+pix8 <- 
+  trata8$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n)) 
+
+pix9 <- 
+  trata9$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n)) 
+
+pix10 <- 
+  trata10$object_rgb %>% 
+  select(2:4) %>% 
+  mutate(classe = predict(mod, newdata = .)) %>% 
+  group_by(classe) %>% 
+  summarise(n = n()) %>% 
+  ungroup() %>% 
+  mutate(prop = n / sum(n)) 
+
+
 library(rio)
 export(pix, "resultado_pivo_2.xlsx")
 
+export(pix1, "resultado_tratamento_1.xlsx")
+export(pix2, "resultado_tratamento_2.xlsx")
+export(pix3, "resultado_tratamento_3.xlsx")
+export(pix4, "resultado_tratamento_4.xlsx")
+export(pix5, "resultado_tratamento_5.xlsx")
+export(pix6, "resultado_tratamento_6.xlsx")
+export(pix7, "resultado_tratamento_7.xlsx")
+export(pix8, "resultado_tratamento_8.xlsx")
+export(pix9, "resultado_tratamento_9.xlsx")
+export(pix10, "resultado_tratamento_10.xlsx")
 
-image_combine(monitor, monitor)
 ```
